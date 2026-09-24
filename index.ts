@@ -14,9 +14,12 @@ export {
   type Locale,
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
+  LOCALE_SOURCE_COOKIE,
   LOCALES,
+  type LocaleSource,
 } from './config';
 export { formatDate, formatNumber } from './format';
+export { applyAppLocale, clearUserLocale, setUserLocale } from './locale-cookie';
 export { loadMessages, pickMessages } from './messages';
 export { type Namespace, NAMESPACES } from './namespaces';
 export { useFormatter, useLocale, useMessages, useTranslations } from 'next-intl';
