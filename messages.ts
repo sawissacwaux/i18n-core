@@ -1,31 +1,26 @@
 import { DEFAULT_LOCALE, type Locale } from './config';
-import { type Namespace, NAMESPACES } from './namespaces';
+import type { Namespace } from './namespaces';
 
 type MessageTree = Record<string, unknown>;
 
-// One file per namespace per locale, merged back into the single object next-intl expects.
-// Splitting them keeps the catalogs mergeable when several people edit copy at once, and
-// lets a client boundary ship only the namespaces a route actually renders.
-async function loadNamespace(locale: Locale, namespace: Namespace): Promise<MessageTree> {
+// One file per locale (messages/<locale>.json), each keyed by namespace — the shape
+// next-intl expects, so it is used as-is.
+async function loadLocale(locale: Locale): Promise<MessageTree> {
   try {
-    return (await import(`../../../messages/${locale}/${namespace}.json`)).default;
+    return (await import(`../../../messages/${locale}.json`)).default;
   } catch {
-    // An untranslated namespace falls back to the default locale rather than rendering
-    // raw keys — a half-translated language stays usable.
-    if (locale !== DEFAULT_LOCALE) {
-      return loadNamespace(DEFAULT_LOCALE, namespace);
-    }
     return {};
   }
 }
 
 export async function loadMessages(locale: Locale): Promise<MessageTree> {
-  const loaded = await Promise.all(
-    NAMESPACES.map(
-      async (namespace) => [namespace, await loadNamespace(locale, namespace)] as const,
-    ),
-  );
-  return Object.fromEntries(loaded);
+  const messages = await loadLocale(locale);
+  if (locale === DEFAULT_LOCALE) {
+    return messages;
+  }
+  // An untranslated namespace falls back to the default locale rather than rendering
+  // raw keys — a half-translated language stays usable.
+  return { ...(await loadLocale(DEFAULT_LOCALE)), ...messages };
 }
 
 // Narrows a full catalog to the namespaces a client boundary needs. Everything passed to

@@ -1,6 +1,6 @@
-// Generated from messages/en/*.json — keep in sync when a namespace file is added or
-// removed. Listed explicitly so the bundler can resolve the dynamic import in ./messages
-// and so a missing namespace is a type error rather than a runtime surprise.
+// The top-level keys of messages/en.json — keep in sync when a namespace is added or
+// removed. Listed explicitly so client boundaries can pick namespaces by name and a
+// misspelt one is a type error rather than a runtime surprise.
 export const NAMESPACES = [
   'analytic',
   'assistentbot',
