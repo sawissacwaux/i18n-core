@@ -1,16 +1,26 @@
 {
   "name": "i18n-core",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Hello world TypeScript package",
+  "description": "Shared i18n module for the Rotutia portals: locale config, locale cookies, catalog loading, formatting and next-intl bindings",
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./next-intl": {
+      "types": "./dist/next-intl/index.d.ts",
+      "default": "./dist/next-intl/index.js"
+    },
+    "./next-intl/server": {
+      "types": "./dist/next-intl/server.d.ts",
+      "default": "./dist/next-intl/server.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -18,12 +28,35 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepare": "npm run build"
   },
   "engines": {
     "node": ">=20.19"
   },
+  "peerDependencies": {
+    "next": ">=15",
+    "next-intl": "^4",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "next-intl": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/react": "^19.3.0",
+    "next": "^15.4.10",
+    "next-intl": "^4.14.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "typescript": "^5.9.3"
   }
 }
