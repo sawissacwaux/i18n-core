@@ -1,6 +1,6 @@
 {
   "name": "i18n-core",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Shared i18n module for the Rotutia portals: locale config, locale cookies, catalog loading, formatting and next-intl bindings",
   "type": "module",
@@ -10,15 +10,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "react-server": "./dist/index.server.js",
       "default": "./dist/index.js"
-    },
-    "./next-intl": {
-      "types": "./dist/next-intl/index.d.ts",
-      "default": "./dist/next-intl/index.js"
-    },
-    "./next-intl/server": {
-      "types": "./dist/next-intl/server.d.ts",
-      "default": "./dist/next-intl/server.js"
     },
     "./package.json": "./package.json"
   },
@@ -38,17 +31,6 @@
     "next": ">=15",
     "next-intl": "^4",
     "react": ">=19"
-  },
-  "peerDependenciesMeta": {
-    "next": {
-      "optional": true
-    },
-    "next-intl": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@types/node": "^20.19.43",

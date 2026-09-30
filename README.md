@@ -14,7 +14,7 @@ The package is private, so install it from git:
 
 ```bash
 npm install git+https://github.com/sawissacwaux/i18n-core.git
-npm install git+https://github.com/sawissacwaux/i18n-core.git#v2.0.0   # pin a version
+npm install git+https://github.com/sawissacwaux/i18n-core.git#v1.0.0   # pin a version
 ```
 
 You also need `next-intl@^4`, `next>=15` and `react>=19` in your app.
@@ -61,7 +61,7 @@ export type Locale = LocaleOf<typeof i18nConfig>; // 'en' | 'ja'
 
 ```ts
 // src/i18n/request.ts
-import { createRequestConfig } from 'i18n-core/next-intl/server';
+import { createRequestConfig } from 'i18n-core';
 
 import { i18nConfig } from './config';
 
@@ -86,8 +86,7 @@ export default withNextIntl({
 
 ```ts
 // src/i18n/index.ts — the one import path for app code
-import { createLocaleCookies } from 'i18n-core';
-import { createI18nHooks } from 'i18n-core/next-intl';
+import { createI18nHooks, createLocaleCookies } from 'i18n-core';
 
 import { i18nConfig } from './config';
 
@@ -99,7 +98,7 @@ export const { setUserLocale, clearUserLocale, applyAppLocale } = createLocaleCo
 
 ```ts
 // src/i18n/provider.tsx
-import { createI18nProvider } from 'i18n-core/next-intl/server';
+import { createI18nProvider } from 'i18n-core';
 
 import { i18nConfig } from './config';
 
@@ -239,17 +238,18 @@ export default createRequestConfig(i18nConfig, {
 
 ## API
 
-### `i18n-core`
-
-Works anywhere; it doesn't depend on any framework.
+Everything is imported from `'i18n-core'`.
 
 | Export | What it does |
 | --- | --- |
 | `defineI18nConfig({ locales, defaultLocale, namespaces })` | Creates the config the other functions take. Throws if `defaultLocale` isn't in `locales`. |
 | `LocaleOf<typeof config>`, `NamespaceOf<typeof config>` | The locale and namespace union types. |
+| `createI18nHooks(config)` | Returns `useLocale()` (typed as your locales) and `useTranslations(namespace?)`. Use them in client components and in non-async server components. |
+| `createLocaleCookies(config)` | Returns `setUserLocale`, `clearUserLocale` and `applyAppLocale`. Browser only. |
+| `createRequestConfig(config, { loadBundled, remoteBaseUrl })` | **Server only.** The request config for next-intl. Default-export it from the file you pass to `createNextIntlPlugin`. |
+| `createI18nProvider(config)` | **Server only.** A server component, `<I18nProvider namespaces={[…]}>`, that passes messages to client components. |
 | `resolveLocale(config, value)` | Returns `value` if it's supported, otherwise `defaultLocale`. |
 | `isSupportedLocale(config, value)` | Type guard for a supported locale. |
-| `createLocaleCookies(config)` | Returns `setUserLocale`, `clearUserLocale` and `applyAppLocale`. Browser only. |
 | `createMessageLoader(config, { loadBundled, remoteBaseUrl })` | Returns `loadMessages(locale)` for use outside next-intl, e.g. in scripts or emails. |
 | `pickMessages(messages, namespaces)` | Keeps only the listed namespaces. |
 | `formatNumber(value, { decimal, locale, ...Intl.NumberFormatOptions })` | `1234.5` → `"1,234.50"`. Pass `decimal: false` for no decimals. |
@@ -258,22 +258,14 @@ Works anywhere; it doesn't depend on any framework.
 
 `formatNumber` and `formatDate` use `en` unless you pass `locale`. Pass `locale: useLocale()` to follow the active language.
 
-### `i18n-core/next-intl`
+### Server-only exports in client code
 
-Works in client components and in non-async server components.
+It's safe for client components to import from `'i18n-core'`. The package uses the `react-server` export condition to serve two builds:
 
-| Export | What it does |
-| --- | --- |
-| `createI18nHooks(config)` | Returns `useLocale()` (typed as your locales) and `useTranslations(namespace?)`. |
+- **Server components** get the real `createRequestConfig` and `createI18nProvider`.
+- **Client components** get stand-ins that throw if called, so `next/headers` never reaches the browser.
 
-### `i18n-core/next-intl/server`
-
-Server only.
-
-| Export | What it does |
-| --- | --- |
-| `createRequestConfig(config, { loadBundled, remoteBaseUrl })` | The request config for next-intl. Default-export it from the file you pass to `createNextIntlPlugin`. |
-| `createI18nProvider(config)` | A server component, `<I18nProvider namespaces={[…]}>`, that passes messages to client components. |
+Both builds export the same names and types, so one import path works everywhere.
 
 ## Installing from a local folder
 
@@ -282,7 +274,7 @@ Server only.
 ```bash
 npm install --install-links ../i18n-core    # copies instead of symlinking
 # or
-cd ../i18n-core && npm pack                 # then: npm install ../i18n-core/i18n-core-2.0.0.tgz
+cd ../i18n-core && npm pack                 # then: npm install ../i18n-core/i18n-core-1.0.0.tgz
 ```
 
 ## Develop

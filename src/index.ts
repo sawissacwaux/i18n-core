@@ -1,24 +1,9 @@
-// Framework-free core: config, locale cookies, message loading and formatting. Safe to
-// import from client and server code alike. The next-intl bindings live in
-// `i18n-core/next-intl` (hooks) and `i18n-core/next-intl/server` (request config, provider),
-// so a change of translation library is confined to those two entry points.
-export {
-  defineI18nConfig,
-  type I18nConfig,
-  isSupportedLocale,
-  LOCALE_COOKIE,
-  LOCALE_COOKIE_MAX_AGE,
-  LOCALE_SOURCE_COOKIE,
-  type LocaleOf,
-  type LocaleSource,
-  type NamespaceOf,
-  resolveLocale,
-} from './config.js';
-export { formatDate, formatNumber } from './format.js';
-export { createLocaleCookies, type LocaleCookies } from './locale-cookie.js';
-export {
-  createMessageLoader,
-  type MessageLoaderOptions,
-  type MessageTree,
-  pickMessages,
-} from './messages.js';
+// The only import path: `import { … } from 'i18n-core'`.
+//
+// package.json maps it per environment. Server components (the "react-server" condition)
+// get ./index.server, with the real request config and provider. Everything else — client
+// components, SSR of client components, plain Node — gets this file, where those two are
+// stubs, so next/headers never ends up in a client bundle. Both files export the same names
+// with the same types.
+export * from './universal.js';
+export { createI18nProvider, createRequestConfig } from './next-intl/server-stubs.js';
